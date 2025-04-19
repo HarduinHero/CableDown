@@ -1,0 +1,53 @@
+
+name: cabledrop-test
+
+services:
+  master:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    image: cabledrop-test-image
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - WHO=master
+    networks:
+      test-net:
+        ipv4_address: 10.0.0.1
+    
+  active-ep-1:
+    image: cabledrop-test-image
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - WHO=active-ep-1
+    networks:
+      test-net:
+        ipv4_address: 10.0.0.10
+
+  passive-ep-1:
+    image: cabledrop-test-image
+    volumes:
+      - .:/usr/src/app
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - WHO=passive-ep-1
+    networks:
+      test-net:
+        ipv4_address: 10.0.0.20
+
+
+
+
+
+
+
+networks:
+  test-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/8
+          gateway: 10.0.0.254
